@@ -2,7 +2,7 @@ services:
   fireaid_web:
     build:
       context: ./fireaid_web/
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: fireaid_web
     restart: always
     ports:
