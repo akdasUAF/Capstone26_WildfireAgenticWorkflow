@@ -40,7 +40,11 @@ export default function LLMPrompt() {
         let user_input = inputValue
         setInputValue("")
 
-        const response: AIResponse = await fetch("/api/ai/query").then((res) => {
+        const response: AIResponse = await fetch("/api/ai/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ msg: user_input }),}).then((res) => 
+        {
           if (res.status == 200) {
             return res.json()
           }
