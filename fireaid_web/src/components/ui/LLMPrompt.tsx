@@ -1,6 +1,13 @@
 import { send } from "process";
+import React, { useState } from "react";
 
-type BubbleTone = "user" | "ai" | "aiCta";
+enum Role { user, ai }
+
+interface Message {
+    src: Role
+    msg: string
+    key: number
+}
 
 function ChatBubble({
   role,
@@ -9,14 +16,14 @@ function ChatBubble({
 }: {
   role: string;
   text: string;
-  tone: BubbleTone;
+  tone: Role;
 }) {
   const baseClasses =
-    tone === "user"
-      ? "bg-amber-50"
-      : tone === "aiCta"
-      ? "bg-emerald-50 border border-emerald-200"
-      : "bg-slate-50";
+    tone === Role.user
+      ? "bg-amber-100"
+      : tone === Role.ai
+      ? "bg-emerald-100 border border-emerald-200"
+      : "bg-slate-100";
 
   return (
     <div className={`rounded-2xl px-3 py-2 text-xs shadow-sm ${baseClasses}`}>
@@ -32,19 +39,21 @@ function ChatBubble({
 
 export default function LLMPrompt() {
 
-    const sendQuery = async (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log("Sending Query")
+    const [chats, setChats] = useState<Message[]>([]);
+    const [inputValue, setInputValue] = useState("")
 
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        console.log(inputValue)
+
+        setChats([...chats, {src: Role.user, msg: inputValue, key: chats.length > 0 ? chats[chats.length-1].key + 1 : 0}])
         // Clear user input
-        let input_elem = document.getElementById("LLMPromptInput") as HTMLInputElement | null
-        let input = ""
-        if (input_elem != null) {
-            console.log("Clearing input text")
-            input = input_elem.value
-            input_elem.value = ""
-        }
-        console.log(input)
+        setInputValue("")
+    }
+
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value)
     }
 
     
@@ -57,18 +66,22 @@ export default function LLMPrompt() {
             <div 
                 id="LLMPromptConversation"
                 className="mb-3 max-h-64 space-y-3 overflow-y-auto text-xs"
-            >
-              
-            </div>
+            >{chats.map(chat => <ChatBubble
+                role={chat.src == Role.user ? "User" : "AI Model"}
+                tone={chat.src}
+                text={chat.msg}
+                key={chat.key}
+              />)}</div>
 
             <form
               className="absolute inset-x-0 bottom-0 h-16 mt-2 mr-2 ml-2 flex items-center gap-2"
-              onSubmit={sendQuery}
+              onSubmit={handleSubmit}
             >
               <input
-                id="LLMPromptInput"
                 className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
                 placeholder="Ask FireGPT about this area..."
+                value={inputValue}
+                onChange={handleChange}
               />
               <button
                 type="submit"
