@@ -75,6 +75,10 @@ export default function FireGPTPage() {
               <span className="text-sm text-slate-500">(MCP-resource)</span>
             </h2>
             <div className="flex gap-2">
+              <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+                onClick={()=>setShowPopUp(true)}>
+                Add terms
+              </button>
               <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50">
                 Query a term
               </button>
@@ -129,10 +133,6 @@ export default function FireGPTPage() {
                 <span className="text-[11px] text-slate-500">
                   (MCP-resource)
                 </span>
-                <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
-                  onClick={()=>setShowPopUp(true)}>
-                  Add terms
-                </button>
               </h3>
               <DataItem
                 title="Lidar tile (63.53° N, 147.3° W)"

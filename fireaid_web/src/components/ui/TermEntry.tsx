@@ -47,7 +47,7 @@ function PopUp({showPopUp, closePopUp, children}: {
         <div className="PopUp" >
             {children}
 
-            <h3>Enter Terminology</h3>
+            <h3 className="font-bold text-slate-800">Enter Terminology</h3>
 
             <form
                 className="mt-2 flex items-center gap-2"
@@ -55,13 +55,13 @@ function PopUp({showPopUp, closePopUp, children}: {
                 onSubmit={sendTerm}
             >
                 <input
-                    className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
+                    className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
                     onChange={(e) => setTerm(e.target.value)}
                     placeholder="Term"
                 />
                 
                 <input
-                    className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
+                    className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
                     onChange={(e) => setDef(e.target.value)}
                     placeholder="Definition"
                 />
@@ -76,7 +76,7 @@ function PopUp({showPopUp, closePopUp, children}: {
             </form>
 
             <button 
-                className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50" 
+                className="mt-2 rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50" 
                 onClick={closePopUp}
             >
                 close
