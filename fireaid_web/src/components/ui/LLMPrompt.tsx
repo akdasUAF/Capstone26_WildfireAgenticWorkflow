@@ -35,23 +35,39 @@ export default function LLMPrompt() {
     const sendQuery = async (e: React.FormEvent) => {
         e.preventDefault()
         console.log("Sending Query")
+
+        // Clear user input
+        let input_elem = document.getElementById("LLMPromptInput") as HTMLInputElement | null
+        let input = ""
+        if (input_elem != null) {
+            console.log("Clearing input text")
+            input = input_elem.value
+            input_elem.value = ""
+        }
+        console.log(input)
     }
+
+    
     return (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div className="relative rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <h2 className="mb-3 text-sm font-semibold text-slate-900">
               Prompt-Based App
             </h2>
 
-            <div className="mb-3 max-h-64 space-y-3 overflow-y-auto text-xs">
+            <div 
+                id="LLMPromptConversation"
+                className="mb-3 max-h-64 space-y-3 overflow-y-auto text-xs"
+            >
               
             </div>
 
             <form
-              className="mt-2 flex items-center gap-2 bottom-0"
+              className="absolute inset-x-0 bottom-0 h-16 mt-2 mr-2 ml-2 flex items-center gap-2"
               onSubmit={sendQuery}
             >
               <input
-                className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
+                id="LLMPromptInput"
+                className="h-9 flex-1 rounded-full border border-slate-300 bg-white px-3 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#FFCC33] focus:ring-1 focus:ring-[#FFCC33]"
                 placeholder="Ask FireGPT about this area..."
               />
               <button
