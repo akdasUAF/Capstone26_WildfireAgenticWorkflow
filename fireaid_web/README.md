@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 You will need to create a `.env` file in this directory with the following template:
 ```
-API_KEY=<your_api_key>
+REACT_APP_API_KEY=<your_api_key>
 ```
 
 ## Getting Started
