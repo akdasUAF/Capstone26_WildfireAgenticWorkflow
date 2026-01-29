@@ -40,6 +40,10 @@ export default function LLMPrompt() {
         let user_input = inputValue
         setInputValue("")
 
+        let user_chat = {src: Role.user, msg: user_input, key: chats.length > 0 ? chats[chats.length-1].key + 1 : 0}
+
+        setChats([...chats, user_chat, {src: Role.ai, msg: "...", key: chats.length > 0 ? chats[chats.length-1].key + 2 : 1}])
+        
         const response: AIResponse = await fetch("/api/ai/query", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -56,11 +60,9 @@ export default function LLMPrompt() {
           return
         }
 
-        setChats([...chats, {src: Role.user, msg: user_input, key: chats.length > 0 ? chats[chats.length-1].key + 1 : 0}, 
-          {src: Role.ai, msg: response.msg, key: chats.length > 0 ? chats[chats.length-1].key + 2 : 1}])
-        
+        console.log("Recieved response: updating children")
 
-        console.log(response)
+        setChats([...chats, user_chat, { src: Role.ai, msg: response.msg, key: chats.length > 0 ? chats[chats.length-1].key + 3 : 2 }])
     }
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
