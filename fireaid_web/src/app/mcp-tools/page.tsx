@@ -1,4 +1,4 @@
-import FireGPTSidebar from "@/components/layout/FireGPTSidebar";
+import FireGPTSidebar from "@/components/layout/FireAIDSidebar";
 import ToolButton from "@/components/ui/ToolButton";
 
 export default function McpToolsPage() {
