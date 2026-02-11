@@ -15,7 +15,7 @@ export default function McpToolsPage() {
                 MCP Tools & Apps
               </h1>
               <p className="mt-1 text-xs text-slate-500">
-                Browse system tools and user apps that FireGPT can call inside
+                Browse system tools and user apps that FireAID can call inside
                 a prompt.
               </p>
             </div>
