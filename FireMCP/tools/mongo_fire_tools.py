@@ -1,20 +1,17 @@
 import os
-from typing import Any, Dict, List, Optional
+from typing import Optional, List, Dict, Any
 from pymongo import MongoClient
 
-# ✅ Default for LOCAL run (Mac terminal)
-# In Docker, set MONGODB_URI to: mongodb://root:password@mongo:27017/?authSource=admin
-MONGODB_URI = os.getenv(
-    "MONGODB_URI",
-    "mongodb://root:password@mongo:27017/?authSource=admin"
-)
+mongo_uri = os.getenv("MONGODB_URI")
+if not mongo_uri:
+    raise ValueError("MONGODB_URI not set")
 
-# Small timeout so it fails fast instead of "silence"
-client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=2000)
+client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
 
-# ✅ Explicit DB name (no ambiguity)
-db = client["fireaid"]
+db_name = os.getenv("MONGODB_DB", "fireaid")
+db = client[db_name]
 collection = db["ak_fire_location_points_raw"]
+
 
 
 def search_fire_points(
