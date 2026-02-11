@@ -1,0 +1,28 @@
+name: Deploy Project to Server
+
+permissions:
+    contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: [self-hosted, sys7049gptrt]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Update fireaid_web Dependancies
+              run: |
+                cd fireaid_web
+                docker build -t fireaid_web_base:latest -f docker/Dockerfile-Base .
+
+            - name: Build and Start Docker Containers
+              run: |
+                docker compose build
+                docker compose up -d 
+
+
