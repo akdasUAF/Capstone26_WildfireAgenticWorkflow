@@ -44,7 +44,7 @@ export default function FireAIDSidebar({ active }: { active: SidebarActive }) {
         <SidebarItem
           icon="🤖"
           label="FireAID"
-          href="/Fireaid"
+          href="/"
           active={active === "fireaid"}
         />
         <SidebarItem
