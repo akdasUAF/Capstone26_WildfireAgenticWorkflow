@@ -33,15 +33,24 @@ There are GitHub actions that will prevent Pull Requests from being merged into 
 - Format: `ruff format <file-or-directory>` 
 - Lint:   `ruff check  <file-or-directory>`
 
-### Branch Names
+### Branches and Pull Requests
+**Branch Names**
+___
 Branch names use the following conventions:
-`initials/brief-description`
+`initials/brief-description`. In the description use - to represent spaces.
 
 An example of this would be: `erl/update-readme`
+
+**Pull Requests**
+___
+Any merge into main must be performed via Pull Request (PR). The GitHub repostiory is configured to require at least one reviewer to approve the PR before it can be merged.
+
+ Code review standards are fairly lax, just make sure the PR correctly implements its intended funcitonality and there are no glaring issues or bugs in the code.
+
 
 ### Contributors
 Ivy Swenson \
 Jenae Mattson \
-Daniel Kim \
 Andrew Winford \
+Daniel Kim \
 Elliott Lewandowski
