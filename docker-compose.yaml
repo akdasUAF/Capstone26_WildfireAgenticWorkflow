@@ -1,37 +1,27 @@
-version: "3.9"
-
 services:
   fireaid_web:
     build:
-      context: ./fireaid_web
+      context: ./fireaid_web/
       dockerfile: docker/Dockerfile
-    container_name: fireaid_web
+    env_file:
+      - .env
     environment:
-      MONGODB_URI: "mongodb://root:password@mongo:27017/fireaid?authSource=admin"
+      NODE_ENV: development
       MCP_HTTP_BASE: "http://firemcp:8081"
+    container_name: fireaid_web
+    restart: always
     ports:
       - "3000:3000"
     depends_on:
+      - mongo
       - firemcp
-    restart: always
-
-    # ⭐⭐⭐ 关键：把宿主机代码 mount 进容器 ⭐⭐⭐
-    volumes:
-      - ./fireaid_web:/var/web
-      - /var/web/node_modules
-      - /var/web/.next
-
-    working_dir: /var/web
-
-    command: pnpm dev
-    
 
   firemcp:
     build:
       context: ./FireMCP
     container_name: firemcp
-    environment:
-      MONGODB_URI: "mongodb://root:password@mongo:27017/?authSource=admin"
+    env_file:
+      - .env
     depends_on:
       - mongo
     restart: always
