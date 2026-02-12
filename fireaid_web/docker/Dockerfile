@@ -1,10 +1,8 @@
-# Create base image with dependencies installed
 FROM fireaid_web_base:latest
+WORKDIR /var/web
 
-COPY --chown=root:node public/ /var/web/public/
-COPY --chown=root:node src/ /var/web/src
-COPY --chown=root:node .env .env
+# 再复制源码
+COPY public/ /var/web/public/
+COPY src/ /var/web/src
 
-# TO-DO: User should be set to node but we need to modify file permissions first
-CMD [ "pnpm", "dev" ]
-EXPOSE 3000
+CMD ["pnpm", "dev"]
