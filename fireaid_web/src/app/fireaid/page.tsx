@@ -15,6 +15,7 @@ const TABS = ["Map", "Charts", "Code", "JSON"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function FireAIDPage() {
+  console.log("REACT_APP_NODE_ENV: ", process.env.REACT_APP_NODE_ENV)
   const [activeTab, setActiveTab] = useState<Tab>("Map");
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,10 +77,10 @@ export default function FireAIDPage() {
               <span className="text-sm text-slate-500">(MCP-resource)</span>
             </h2>
             <div className="flex gap-2">
-              <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+              {process.env.NODE_ENV?.toLowerCase() != "production" && <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
                 onClick={()=>setShowPopUp(true)}>
                 Add terms
-              </button>
+              </button>}
               <button className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50">
                 Query a term
               </button>

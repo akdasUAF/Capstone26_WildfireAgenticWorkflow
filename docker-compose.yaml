@@ -9,6 +9,7 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    command: ["pnpm", "prod"]
 
   mongo:
     image: mongo:8.0
