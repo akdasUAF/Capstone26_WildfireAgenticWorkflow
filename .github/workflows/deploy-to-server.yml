@@ -19,7 +19,7 @@ jobs:
 
             - name: Create .env file
               run: |
-                # echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+                echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
                 echo "ALLOW_INSERT=false" >> .env
                 echo "MONGODB_URI=mongodb://root:password@mongo:27018/?authSource=admin" >> .env
 
@@ -31,7 +31,12 @@ jobs:
 
             - name: Build and Start Docker Containers
               run: |
+                docker compose down
                 docker compose build
                 docker compose up -d 
+
+            - name: Populate MongoDB with Test Data
+              run: |
+                mongosh --port 27018 -u root -p password --eval 'db.terms.insertOne({term: "Fire", def: "Block of Ice"})'
 
 
