@@ -13,8 +13,8 @@ RUN npm i -g pnpm@10 && pnpm install
 COPY public/ ./public/
 COPY src/ ./src/
 
-# 3) Copy configs you confirmed exist
-COPY next-env.d.ts tsconfig.json next.config.ts postcss.config.mjs eslint.config.mjs ./
+# 3) Copy configs
+COPY tsconfig.json next.config.ts postcss.config.mjs eslint.config.mjs ./
 
 
 EXPOSE 3000
