@@ -16,8 +16,6 @@ COPY src/ ./src/
 # 3) Copy configs you confirmed exist
 COPY next-env.d.ts tsconfig.json next.config.ts postcss.config.mjs eslint.config.mjs ./
 
-# 4) Env (for local dev in container)
-COPY .env .env
 
 EXPOSE 3000
 CMD ["pnpm","dev","--hostname","0.0.0.0","--port","3000"]

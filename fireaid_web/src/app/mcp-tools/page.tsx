@@ -91,61 +91,85 @@ export default function McpToolsPage() {
       .trim();
   }, [spec]);
 
-  //  KEY: GET(path) version
-  async function runQuery(nextSpec?: QuerySpec) {
-    const s = nextSpec ?? spec;
-    setRunning(true);
-    setRunErr(null);
 
-    try {
-      localStorage.setItem("mcp:last_spec", JSON.stringify(s));
+  // POST(spec) version (new)
+// POST(spec) version (multi-year loop + merge) ✅ COPY/PASTE
+async function runQuery(nextSpec?: QuerySpec) {
+  const s = nextSpec ?? spec;
+  setRunning(true);
+  setRunErr(null);
 
-      const ys = s.yearStart ?? 2020;
-      const ye = s.yearEnd ?? ys;
-      const limit = s.limit ?? 200;
+  try {
+    localStorage.setItem("mcp:last_spec", JSON.stringify(s));
 
-      const all: any[] = [];
+    const ys = s.yearStart ?? 2020;
+    const ye = s.yearEnd ?? ys;
+    const limit = s.limit ?? 200;
 
-      for (let y = ys; y <= ye; y++) {
-        const params = new URLSearchParams();
-        params.set("year", String(y));
-        params.set("limit", String(limit));
+    const all: any[] = [];
 
-        if (s.prescribed === "yes") params.set("prescribed", "Y");
-        if (s.prescribed === "no") params.set("prescribed", "N");
+    for (let y = ys; y <= ye; y++) {
+      // Map UI spec -> backend spec (per-year)
+      const backendSpec = {
+        yearStart: y,
+        yearEnd: y, 
+        prescribed:
+          s.prescribed === "all" ? null : s.prescribed === "yes" ? "Y" : "N",
+        // optional UI fields (backend can ignore if unused)
+        state: s.state ?? undefined,
+        acresMin: s.acresMin ?? undefined,
+        acresMax: s.acresMax ?? undefined,
+        bbox: s.bbox ?? null,
+        limit,
+      };
 
-        const path = `/mcp/search?${params.toString()}`;
+      const res = await fetch("/api/mcp/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: "", spec: backendSpec }),
+      });
 
-        const res = await fetch(`/api/mcp/run?path=${encodeURIComponent(path)}`, {
-          cache: "no-store",
-        });
-
-        const text = await res.text().catch(() => "");
-        if (!res.ok) throw new Error(`Run failed: HTTP ${res.status} ${text}`);
-
-        const parsed = JSON.parse(text);
-        const rows =
-          parsed?.results ??
-          parsed?.items ??
-          parsed?.data ??
-          (Array.isArray(parsed) ? parsed : []);
-
-        all.push(...rows);
+      const text = await res.text().catch(() => "");
+      if (!res.ok) {
+        throw new Error(`Run failed (year ${y}): HTTP ${res.status} ${text}`);
       }
 
-      const mergedText = JSON.stringify({ results: all });
-      localStorage.setItem("mcp:last_result", mergedText);
-      localStorage.setItem("mcp:last_call", `/mcp/search?year=${ys}..${ye}&limit=${limit}`);
-      localStorage.setItem("mcp:last_tool", "search_fire_points");
+      const parsed = JSON.parse(text);
 
-      window.dispatchEvent(new Event("mcp:updated"));
-    } catch (e: any) {
-      setRunErr(e?.message || "Failed to run query");
-    } finally {
-      setRunning(false);
+      // Normalize rows across possible payload shapes
+      const rows =
+        parsed?.results ??
+        parsed?.items ??
+        parsed?.data ??
+        (Array.isArray(parsed) ? parsed : []);
+
+      all.push(...rows);
     }
-  }
 
+    // Persist merged results for panels/charts/map
+    localStorage.setItem("mcp:last_result", JSON.stringify({ results: all }));
+    localStorage.setItem("mcp:last_tool", "search_fire_points");
+    localStorage.setItem("mcp:last_call", `/run years ${ys}..${ye}`);
+    localStorage.setItem(
+      "mcp:last_run_spec",
+      JSON.stringify({
+        yearStart: ys,
+        yearEnd: ye,
+        prescribed:
+          s.prescribed === "all" ? null : s.prescribed === "yes" ? "Y" : "N",
+        limit,
+      })
+    );
+
+    // Notify listeners
+    window.dispatchEvent(new Event("mcp:updated"));
+  } catch (e: any) {
+    setRunErr(e?.message || "Failed to run query");
+  } finally {
+    setRunning(false);
+  }
+}
+        
   return (
     <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1.4fr)_minmax(0,0.9fr)]">
       {/* Left */}
@@ -854,8 +878,8 @@ function ToolCard({
       <div className="mt-1 text-[11px] text-slate-400">{rating}</div>
 
       <div className="mt-3">
-        <ToolButton
-          label="Import to prompt"
+        <button
+          type="button"
           onClick={() => {
             const suggestedCall =
               name === "search_fire_points"

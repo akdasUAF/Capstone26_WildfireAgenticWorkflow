@@ -15,7 +15,9 @@ function PopUp({
   const [term, setTerm] = useState("");
   const [def, setDef] = useState("");
   const { CSVReader } = useCSVReader();
-  const [termBatch, setTermBatch] = useState<{ term: string; def: string }[]>();
+  const [termBatch, setTermBatch] = useState<
+    { term: string; def: string }[]
+  >();
   const [loading, setLoading] = useState(false);
 
   const handleFileSelect = async (results: any) => {
@@ -42,7 +44,6 @@ function PopUp({
       if (!res.ok) {
         console.error(json.message);
       } else {
-        console.log("Success:", json);
         setTerm("");
         setDef("");
         setTermBatch([]);
@@ -57,8 +58,6 @@ function PopUp({
 
   const sendTerm = async (e: FormEvent) => {
     e.preventDefault();
-
-    console.log(`Adding to MongoDB term: ${term}, def: ${def}`);
     setLoading(true);
 
     try {
@@ -73,7 +72,6 @@ function PopUp({
       if (!res.ok) {
         console.error(json.message);
       } else {
-        console.log("Success:", json);
         setTerm("");
         setDef("");
         setTermBatch([]);
@@ -90,19 +88,18 @@ function PopUp({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       onMouseDown={(e) => {
-        
         if (e.target === e.currentTarget) (closePopUp as any)(e);
       }}
     >
       {/* overlay */}
-      <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 z-[9999] bg-slate-900/30 backdrop-blur-[2px]" />
 
       {/* modal card */}
-      <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+      <div className="relative z-[10000] w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
         {/* header */}
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <div>
@@ -130,7 +127,6 @@ function PopUp({
           {/* Single term form */}
           <form
             className="mt-2 grid grid-cols-1 items-end gap-3 md:grid-cols-[1fr_1fr_auto]"
-            id="SingleTermSubmit"
             onSubmit={sendTerm}
           >
             <div>
@@ -139,7 +135,7 @@ function PopUp({
               </label>
               <input
                 value={term}
-                className="h-10 w-full rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC33]/40"
+                className="h-10 w-full rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#FFCC33]/40"
                 onChange={(e) => setTerm(e.target.value)}
                 placeholder="Term"
               />
@@ -151,7 +147,7 @@ function PopUp({
               </label>
               <input
                 value={def}
-                className="h-10 w-full rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC33]/40"
+                className="h-10 w-full rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#FFCC33]/40"
                 onChange={(e) => setDef(e.target.value)}
                 placeholder="Definition"
               />
@@ -176,7 +172,12 @@ function PopUp({
             </div>
 
             <CSVReader onUploadAccepted={handleFileSelect}>
-              {({ getRootProps, acceptedFile, ProgressBar, getRemoveFileProps }: any) => (
+              {({
+                getRootProps,
+                acceptedFile,
+                ProgressBar,
+                getRemoveFileProps,
+              }: any) => (
                 <>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-3">
@@ -189,16 +190,9 @@ function PopUp({
                       </button>
 
                       <span className="text-xs text-slate-500">
-                        {acceptedFile ? (
-                          <>
-                            Selected:{" "}
-                            <span className="font-medium text-slate-700">
-                              {acceptedFile.name}
-                            </span>
-                          </>
-                        ) : (
-                          "No file selected"
-                        )}
+                        {acceptedFile
+                          ? `Selected: ${acceptedFile.name}`
+                          : "No file selected"}
                       </span>
 
                       <button
@@ -224,9 +218,11 @@ function PopUp({
                     <ProgressBar />
                   </div>
 
-                  {/* 小提示 */}
                   <div className="mt-2 text-xs text-slate-500">
-                    CSV format: <span className="font-medium">term, definition</span>
+                    CSV format:{" "}
+                    <span className="font-medium">
+                      term, definition
+                    </span>
                   </div>
                 </>
               )}
