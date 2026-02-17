@@ -4,11 +4,11 @@ services:
     build:
       context: ./fireaid_web/
       dockerfile: docker/Dockerfile
-    restart: always
-    env_file:
-      - .env
     depends_on:
       - mongo
+    env_file:
+      - .env
+    restart: always
     ports:
       - "3000:3000"
 
