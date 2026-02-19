@@ -6,6 +6,8 @@ permissions:
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -33,12 +35,11 @@ jobs:
                 docker compose build
                 docker compose up -d 
 
-            - name: Populate MongoDB with Test Data
+            - name: Populate MongoDB with terms.csv
               run: |
-                mongosh --port 27018 -u root -p password --eval 'db.terms.insertOne({term: "Fire", def: "Block of Ice"})'
-            
-            - name: Scrape Terminology csv
-              run: |
-                
-
+                while read line;
+                do
+                    IFS=',' read -r term def <<< $line
+                    mongosh --port 27018 -u root -p password --eval "db.terms.insertOne({term: \"$term\", def: $def})"
+                done < ./scripts/term_scraper/terms.csv
 
