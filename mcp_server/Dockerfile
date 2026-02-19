@@ -7,6 +7,6 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY term_mcp.py .
+COPY main.py .
 
-CMD [ "fastmcp", "run", "term_mcp.py" ]
+CMD [ "fastmcp", "run", "main.py", "--host", "0.0.0.0", "--port", "3001" ]
