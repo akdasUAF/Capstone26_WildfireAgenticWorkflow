@@ -33,8 +33,19 @@ jobs:
                 docker compose build
                 docker compose up -d 
 
-            - name: Populate MongoDB with Test Data
+            - name: Populate MongoDB with terms.csv
               run: |
-                mongosh --port 27018 -u root -p password --eval 'db.terms.insertOne({term: "Fire", def: "Block of Ice"})'
+                mongosh --port 27018 -u root -p password \
+                  --eval "use fireaid" \
+                  --eval "db.terms.deleteMany({})"
+                query=""
+                while read line;
+                do
+                    IFS=',' read -r term def <<< $line
+                    query+="{term: \"$term\", def: $def},"
+                done < ./scripts/term_scraper/terms.csv
 
+                mongosh --port 27018 -u root -p password \
+                  --eval "use fireaid" \
+                  --eval "db.terms.insertMany([$query])"
 
