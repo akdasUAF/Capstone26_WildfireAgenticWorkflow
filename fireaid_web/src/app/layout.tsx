@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className + " bg-slate-50"}>
         <Topbar />
 
-        {/* 主内容区域：不再在这里做 max-w 居中！ */}
+        {/* max-w middle */}
         <div className="flex min-h-[calc(100vh-3.5rem)]">{children}</div>
       </body>
     </html>

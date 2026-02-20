@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 
 import FireAIDSidebar from "@/components/layout/FireAIDSidebar";
 import ToolButton from "@/components/ui/ToolButton";
+import FireDashboard from "@/components/mcp/FireDashboard";
 import McpResultPanel from "@/components/mcp/McpResultPanel";
 import FiresByYearChart from "@/components/mcp/FiresByYearChart";
 
@@ -52,7 +53,7 @@ export default function McpToolsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch("/api/mcp/tools", { cache: "no-store" });
+        const r = await fetch("/api/mcp/run", { cache: "no-store" });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const data = await r.json();
         setTools(data.tools ?? []);
@@ -91,84 +92,52 @@ export default function McpToolsPage() {
       .trim();
   }, [spec]);
 
-
-  // POST(spec) version (new)
-// POST(spec) version (multi-year loop + merge) ✅ COPY/PASTE
-async function runQuery(nextSpec?: QuerySpec) {
-  const s = nextSpec ?? spec;
-  setRunning(true);
-  setRunErr(null);
-
-  try {
-    localStorage.setItem("mcp:last_spec", JSON.stringify(s));
-
-    const ys = s.yearStart ?? 2020;
-    const ye = s.yearEnd ?? ys;
-    const limit = s.limit ?? 200;
-
-    const all: any[] = [];
-
-    for (let y = ys; y <= ye; y++) {
-      // Map UI spec -> backend spec (per-year)
+  async function runQuery(nextSpec?: QuerySpec) {
+    const s = nextSpec ?? spec;
+    setRunning(true);
+    setRunErr(null);
+  
+    try {
+      localStorage.setItem("mcp:last_spec", JSON.stringify(s));
+  
       const backendSpec = {
-        yearStart: y,
-        yearEnd: y, 
-        prescribed:
-          s.prescribed === "all" ? null : s.prescribed === "yes" ? "Y" : "N",
-        // optional UI fields (backend can ignore if unused)
+        yearStart: s.yearStart ?? 2020,
+        yearEnd: s.yearEnd ?? s.yearStart ?? 2020,
+        prescribed: s.prescribed === "all" ? null : s.prescribed === "yes" ? "Y" : "N",
         state: s.state ?? undefined,
         acresMin: s.acresMin ?? undefined,
         acresMax: s.acresMax ?? undefined,
         bbox: s.bbox ?? null,
-        limit,
+        limit: s.limit ?? 200,
       };
-
+  
       const res = await fetch("/api/mcp/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: "", spec: backendSpec }),
+        body: JSON.stringify({ query: "", ...backendSpec }), 
       });
-
+  
       const text = await res.text().catch(() => "");
-      if (!res.ok) {
-        throw new Error(`Run failed (year ${y}): HTTP ${res.status} ${text}`);
-      }
-
+      if (!res.ok) throw new Error(`Run failed: HTTP ${res.status} ${text}`);
+  
       const parsed = JSON.parse(text);
-
-      // Normalize rows across possible payload shapes
       const rows =
-        parsed?.results ??
-        parsed?.items ??
-        parsed?.data ??
-        (Array.isArray(parsed) ? parsed : []);
-
-      all.push(...rows);
+        parsed?.results ?? parsed?.items ?? parsed?.data ?? (Array.isArray(parsed) ? parsed : []);
+  
+      
+      localStorage.setItem(
+        "mcp:last_result",
+        JSON.stringify({ results: rows, filters: backendSpec })
+      );
+  
+      window.dispatchEvent(new Event("mcp:updated"));
+    } catch (e: any) {
+      setRunErr(e?.message || "Failed to run query");
+    } finally {
+      setRunning(false);
     }
-
-    // Persist merged results for panels/charts/map
-    localStorage.setItem("mcp:last_result", JSON.stringify({ results: all }));
-    localStorage.setItem("mcp:last_tool", "search_fire_points");
-    localStorage.setItem("mcp:last_call", `/run years ${ys}..${ye}`);
-    localStorage.setItem(
-      "mcp:last_run_spec",
-      JSON.stringify({
-        yearStart: ys,
-        yearEnd: ye,
-        prescribed:
-          s.prescribed === "all" ? null : s.prescribed === "yes" ? "Y" : "N",
-        limit,
-      })
-    );
-
-    // Notify listeners
-    window.dispatchEvent(new Event("mcp:updated"));
-  } catch (e: any) {
-    setRunErr(e?.message || "Failed to run query");
-  } finally {
-    setRunning(false);
   }
-}
+  
         
   return (
     <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[260px_minmax(0,1.4fr)_minmax(0,0.9fr)]">
@@ -191,6 +160,9 @@ async function runQuery(nextSpec?: QuerySpec) {
             <FireMap viewMode={viewMode} />
           </div>
         </div>
+
+
+        <FireDashboard />
 
         {/* MCP Tools & Apps */}
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-6">
@@ -275,7 +247,7 @@ async function runQuery(nextSpec?: QuerySpec) {
       </div>
     </div>
   );
-}
+
 
 /* ===========================
    Header
@@ -903,4 +875,5 @@ function ToolCard({
       </div>
     </div>
   );
+}
 }

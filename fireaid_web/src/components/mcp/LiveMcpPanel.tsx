@@ -8,7 +8,7 @@ function buildPathFromNL(nl: string) {
   // 超轻量规则：你后面可以换成“LLM 路由”
   const text = (nl || "").toLowerCase();
 
-  // year：抓 4 位数
+  // year
   const m = text.match(/\b(19|20)\d{2}\b/);
   const year = m ? Number(m[0]) : 2024;
 
@@ -46,10 +46,10 @@ export default function LiveMcpPanel() {
     setRunning(true);
     setStatus(null);
 
-    // ✅ 先清 error
+  
     localStorage.removeItem("mcp:last_error");
 
-    // ✅ 写入 query & suggested path
+    //  query & suggested path
     localStorage.setItem("mcp:last_query", query);
     localStorage.setItem("mcp:last_call", suggestedPath);
 
@@ -62,7 +62,7 @@ export default function LiveMcpPanel() {
       const text = await r.text();
 
       if (!r.ok) {
-        // 把后端错误也存起来
+        
         localStorage.setItem("mcp:last_error", `HTTP ${r.status}: ${text}`);
         localStorage.removeItem("mcp:last_result");
         window.dispatchEvent(new Event("mcp:updated"));
@@ -78,10 +78,10 @@ export default function LiveMcpPanel() {
         data = text;
       }
 
-      // ✅ 写入结果（关键）
+      // 写入结果（关键）
       localStorage.setItem("mcp:last_result", JSON.stringify(data));
 
-      // ✅ 通知所有面板刷新（关键）
+      // 通知所有面板刷新
       window.dispatchEvent(new Event("mcp:updated"));
 
       setStatus("OK");

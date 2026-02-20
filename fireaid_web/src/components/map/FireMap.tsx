@@ -58,12 +58,12 @@ function InvalidateSizeOnChange({ viewMode }: { viewMode: ViewMode }) {
   const map = useMap();
 
   useEffect(() => {
-    // 第一次渲染后强制刷新
+    // 
     const t1 = setTimeout(() => {
       map.invalidateSize();
     }, 200);
 
-    // 再补一刀（防止 grid 动画延迟）
+    // 
     const t2 = setTimeout(() => {
       map.invalidateSize();
     }, 600);

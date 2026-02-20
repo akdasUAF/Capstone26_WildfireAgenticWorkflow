@@ -14,7 +14,7 @@ type Point = { year: string; count: number };
 
 export default function FiresByYearChart({
   data,
-  height = 680, // 🔥 更高
+  height = 680, // taller height for better aspect ratio
   title = "Prescribed Fires by Year",
 }: {
   data: Point[];
@@ -63,7 +63,7 @@ export default function FiresByYearChart({
             dataKey="count"
             fill="#2563eb"
             radius={[6, 6, 0, 0]}
-            barSize={18}   // 🔥 柱子更细
+            barSize={18}   // slimmer bars
           />
         </BarChart>
       </ResponsiveContainer>

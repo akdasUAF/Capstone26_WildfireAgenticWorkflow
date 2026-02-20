@@ -9,7 +9,7 @@ export default function FireAIDSidebar({ active }: { active: string }) {
 
   return (
     <aside className="w-72 shrink-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      {/* 顶部品牌 */}
+      {/* top */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white text-lg">
