@@ -15,9 +15,13 @@ export default function FireAIDSidebar({ active }: { active: string }) {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white text-lg">
             🔥
           </div>
-          <div>
-            <div className="text-xs text-slate-500">UAF Wildfire Lab</div>
-            <div className="text-lg font-bold text-slate-900">FireAID</div>
+          <div className="flex flex-col leading-tight">
+            <span className="text-[10px] font-semibold text-[#FFCC33]">
+              UAF Data/AI Lab
+            </span>
+            <span className="text-xs font-semibold text-slate-900">
+              FireAID
+            </span>
           </div>
         </div>
 
