@@ -67,7 +67,7 @@ export default async function handler(
 
                 response = await openai.responses.create({
                     model: "gpt-5",
-                    instructions: "Respond using information retrieved from a tool. Indicate whether you have included information from a tool. Do not make anymore tool calls.",
+                    instructions: "Respond using information retrieved from a tool. Indicate whether you have included information from a tool.",
                     previous_response_id: response.id,
                     input: new_input,
                     tools: query_tools,
